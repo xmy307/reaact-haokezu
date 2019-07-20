@@ -1,0 +1,13 @@
+/* 全局样式 */
+html,
+body {
+  color: #333;
+  background-color: #fff;
+  font-family: "Microsoft YaHei";
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

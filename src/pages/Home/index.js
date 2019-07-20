@@ -1,5 +1,9 @@
 import React from "react";
 
+// antd-mobile的使用
+// import { Button } from 'antd-mobile';
+// ReactDOM.render(<Button>Start</Button>, mountNode);
+
 import { Route } from "react-router-dom";
 
 // 导入路由
