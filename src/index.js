@@ -10,5 +10,8 @@ import "./index.css";
 // 导入根组件
 import App from "./App";
 
+// 引入字体样式
+import "./assets/fonts/iconfont.css";
+
 // 渲染根组件
 ReactDOM.render(<App />, document.getElementById("root"));
