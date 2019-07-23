@@ -1,9 +1,22 @@
 /* 全局样式 */
 html,
 body {
+  height: 100%;
   color: #333;
   background-color: #fff;
   font-family: "Microsoft YaHei";
+}
+
+#root {
+  height: 100%;
+}
+
+.app {
+  height: 100%;
+}
+
+p {
+  color: #333;
 }
 
 * {
