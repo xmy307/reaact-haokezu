@@ -18,6 +18,8 @@ import nav2 from "../../assets/images/nav-2.png";
 import nav3 from "../../assets/images/nav-3.png";
 import nav4 from "../../assets/images/nav-4.png";
 
+const BMap = window.BMap;
+
 // const PlaceHolder = ({ className = "", ...restProps }) => (
 //   <div className={`${className}placeholder`} {...restProps} />
 // );
@@ -43,7 +45,8 @@ export default class Index extends React.Component {
     imgHeight: 176,
     imgLoading: false,
     group: [],
-    news: []
+    news: [],
+    cityName: "上海"
   };
 
   // 页面一进来，挂载，发送请求
@@ -53,8 +56,37 @@ export default class Index extends React.Component {
     this.getAbvisory();
 
     // 使用H5中的地理位置API，来获取当前用户所在的地理位置
-    navigator.geolocation.getCurrentPosition(position => {
-      console.log("当前位置的信息：", position);
+    // navigator.geolocation.getCurrentPosition(position => {
+    //   // console.log("当前位置的信息：", position);
+    // });
+
+    const myCity = new BMap.LocalCity();
+    myCity.get(async result => {
+      // 通过Ip定位，拿到当前城市信息
+      const cityName = result.name;
+      // console.log(cityName);
+
+      // 调用接口换取项目中有房源的城市信息
+      const res = await axios.get("http://localhost:8080/area/info", {
+        // params是用于添加到url请求中字符串后面的，用于get请求;name=xxx；其中name就是紧接在info后的name；而cityname就是xxx，也是value
+        params: {
+          name: cityName
+        }
+      });
+      // 根据接口返回的定位结果
+      // console.log("接口返回的城市信息：", res);
+
+      const { label, value } = res.data.body;
+
+      this.setState({
+        cityName: label
+      });
+      // 1.在一个页面中做的定位，在另一个页面中作为数据进行使用，则该数据要存储在localStorage，保证在另一个页面中能拿到该数据
+      // 2.同样的在一个页面定位后，即使刷新也仍保持该数据在本页面，同样也是要保存在localStorage
+
+      // 将获取到的当前城市，存储到本地缓存中
+      // 要存储的是json对象，但本地缓存中只能存字符串，要先将对象转为字符串JSON.stringify，才能存储
+      localStorage.setItem("hkz_city", JSON.stringify({ label, value }));
     });
   };
 
@@ -184,7 +216,7 @@ export default class Index extends React.Component {
               <Flex>
                 <Link to="/citylist">
                   <div className="location">
-                    <span>上海</span>
+                    <span>{this.state.cityName}</span>
                     <i className="iconfont icon-arrow" />
                   </div>
                 </Link>
