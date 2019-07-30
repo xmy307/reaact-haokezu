@@ -1,0 +1,12 @@
+.am-navbar-light {
+  background-color: #f6f5f6;
+}
+.iconBack {
+  color: #999;
+}
+
+.navBar {
+  margin-top: -45px;
+  background-color: #f6f5f6;
+  z-index: 2;
+}

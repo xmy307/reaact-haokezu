@@ -9,8 +9,11 @@ import { Link } from "react-router-dom";
 // 导入scss
 import "./index.scss";
 
-// 导入axios
-import axios from "axios";
+// 导入API
+// 导入获取定位城市方法
+import { getCurrentCity, BASE_URL, API } from "../../utils";
+
+import SearchHeader from "../../components/SearchHeader";
 
 // 导入图片
 import nav1 from "../../assets/images/nav-1.png";
@@ -18,7 +21,7 @@ import nav2 from "../../assets/images/nav-2.png";
 import nav3 from "../../assets/images/nav-3.png";
 import nav4 from "../../assets/images/nav-4.png";
 
-const BMap = window.BMap;
+// const BMap = window.BMap;
 
 // const PlaceHolder = ({ className = "", ...restProps }) => (
 //   <div className={`${className}placeholder`} {...restProps} />
@@ -42,7 +45,7 @@ export default class Index extends React.Component {
   // 初始状态时表示图片还没加载完成，当请求数据
   state = {
     imgSwipper: [],
-    imgHeight: 176,
+    imgHeight: 212,
     imgLoading: false,
     group: [],
     news: [],
@@ -50,7 +53,7 @@ export default class Index extends React.Component {
   };
 
   // 页面一进来，挂载，发送请求
-  componentDidMount = () => {
+  async componentDidMount() {
     this.getSwippers();
     this.getGroup();
     this.getAbvisory();
@@ -60,35 +63,40 @@ export default class Index extends React.Component {
     //   // console.log("当前位置的信息：", position);
     // });
 
-    const myCity = new BMap.LocalCity();
-    myCity.get(async result => {
-      // 通过Ip定位，拿到当前城市信息
-      const cityName = result.name;
-      // console.log(cityName);
+    // const myCity = new BMap.LocalCity();
+    // myCity.get(async result => {
+    //   // 通过Ip定位，拿到当前城市信息
+    //   const cityName = result.name;
+    //   // console.log(cityName);
 
-      // 调用接口换取项目中有房源的城市信息
-      const res = await axios.get("http://localhost:8080/area/info", {
-        // params是用于添加到url请求中字符串后面的，用于get请求;name=xxx；其中name就是紧接在info后的name；而cityname就是xxx，也是value
-        params: {
-          name: cityName
-        }
-      });
-      // 根据接口返回的定位结果
-      // console.log("接口返回的城市信息：", res);
+    //   // 调用接口换取项目中有房源的城市信息
+    //   const res = await axios.get("http://localhost:8080/area/info", {
+    //     // params是用于添加到url请求中字符串后面的，用于get请求;name=xxx；其中name就是紧接在info后的name；而cityname就是xxx，也是value
+    //     params: {
+    //       name: cityName
+    //     }
+    //   });
+    //   // 根据接口返回的定位结果
+    //   // console.log("接口返回的城市信息：", res);
 
-      const { label, value } = res.data.body;
+    //   const { label, value } = res.data.body;
 
-      this.setState({
-        cityName: label
-      });
-      // 1.在一个页面中做的定位，在另一个页面中作为数据进行使用，则该数据要存储在localStorage，保证在另一个页面中能拿到该数据
-      // 2.同样的在一个页面定位后，即使刷新也仍保持该数据在本页面，同样也是要保存在localStorage
+    //   this.setState({
+    //     cityName: label
+    //   });
+    // 1.在一个页面中做的定位，在另一个页面中作为数据进行使用，则该数据要存储在localStorage，保证在另一个页面中能拿到该数据
+    // 2.同样的在一个页面定位后，即使刷新也仍保持该数据在本页面，同样也是要保存在localStorage
 
-      // 将获取到的当前城市，存储到本地缓存中
-      // 要存储的是json对象，但本地缓存中只能存字符串，要先将对象转为字符串JSON.stringify，才能存储
-      localStorage.setItem("hkz_city", JSON.stringify({ label, value }));
+    // 将获取到的当前城市，存储到本地缓存中
+    // 要存储的是json对象，但本地缓存中只能存字符串，要先将对象转为字符串JSON.stringify，才能存储
+    //   localStorage.setItem("hkz_city", JSON.stringify({ label, value }));
+    // });
+
+    const { label } = await getCurrentCity();
+    this.setState({
+      cityName: label
     });
-  };
+  }
 
   // 轮播图数据
   async getSwippers() {
@@ -101,7 +109,7 @@ export default class Index extends React.Component {
     //     imgSwipper: res.data.body
     //   });
     // });
-    const res = await axios({
+    const res = await API({
       method: "get",
       url: "http://localhost:8080/home/swiper"
     });
@@ -113,7 +121,7 @@ export default class Index extends React.Component {
   }
   // 租房小组数据
   async getGroup() {
-    const res = await axios.get(
+    const res = await API.get(
       "http://localhost:8080/home/groups?area=AREA%7C88cff55c-aaa4-e2e0"
     );
     // console.log(res);
@@ -123,7 +131,7 @@ export default class Index extends React.Component {
   }
   // 最新资讯数据
   async getAbvisory() {
-    const res = await axios.get(
+    const res = await API.get(
       "http://localhost:8080/home/news?area=AREA%7C88cff55c-aaa4-e2e0"
     );
     // console.log(res);
@@ -147,7 +155,7 @@ export default class Index extends React.Component {
       >
         {/* onLoad 图片加载完成事件 */}
         <img
-          src={`http://localhost:8080${item.imgSrc}`}
+          src={`${BASE_URL}${item.imgSrc}`}
           alt=""
           style={{ width: "100%", verticalAlign: "top" }}
           onLoad={() => {
@@ -178,7 +186,7 @@ export default class Index extends React.Component {
       <div key={item.id}>
         <Flex justify="between" className="newsList">
           <div className="left">
-            <img src={`http://localhost:8080${item.imgSrc}`} alt="" />
+            <img src={`${BASE_URL}${item.imgSrc}`} alt="" />
           </div>
           <div className="content">
             <div className="title">{item.title}</div>
@@ -210,7 +218,9 @@ export default class Index extends React.Component {
         </div>
 
         {/* 搜索导航 */}
-        <div className="search">
+        {/* 组件传递进来一个参数 */}
+        <SearchHeader cityName={this.state.cityName} />
+        {/* <div className="search">
           <Flex justify="between">
             <div className="searchInpt">
               <Flex>
@@ -234,7 +244,7 @@ export default class Index extends React.Component {
               </div>
             </Link>
           </Flex>
-        </div>
+        </div> */}
 
         {/* 合租信息导航 */}
         <Flex className="nav">{this.renderHouseInfo()}</Flex>

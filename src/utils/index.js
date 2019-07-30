@@ -5,11 +5,13 @@
 // 异步请求中存在方法try..catch   而try中拿到的就是Promise请求中的resolve的结果，而catch拿到的就是catch中的reject结果  try...catch是可省略的  try获取数据成功，catch获取数据失败
 
 import axios from "axios";
+import { getCity, setCity } from "./city";
 
 const BMap = window.BMap;
 
 const getCurrentCity = () => {
-  const currentCity = localStorage.getItem("hkzf_city");
+  // const currentCity = localStorage.getItem("hkzf_city");
+  const currentCity = getCity();
 
   if (!currentCity) {
     // 返回该方法
@@ -29,7 +31,8 @@ const getCurrentCity = () => {
         // 拿到数据，使用resolve暴露出去，resolve中拿到的是一个对象
         resolve({ label, value });
 
-        localStorage.setItem("hkz_city", JSON.stringify({ label, value }));
+        // localStorage.setItem("hkz_city", JSON.stringify({ label, value }));
+        setCity({ label, value });
       });
     });
   } else {
@@ -40,4 +43,9 @@ const getCurrentCity = () => {
   }
 };
 
-export { getCurrentCity };
+export { getCurrentCity, getCity, setCity };
+
+// 导入 url，然后再导出
+export { BASE_URL } from "./url";
+// 导入 API，并导入
+export { API } from "./api";
