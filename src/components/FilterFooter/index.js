@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 import styles from "./index.module.css";
 
-function FilterFooter({ style, className, onCancel, onSave }) {
+function FilterFooter({ style, className, onCancel, onSave, cancelText }) {
   // console.log("这是公共组件ff：", onCancel, onSave);
 
   return (
@@ -15,7 +15,7 @@ function FilterFooter({ style, className, onCancel, onSave }) {
         className={[styles.btn, styles.cancel].join(" ")}
         onClick={onCancel}
       >
-        取消
+        {cancelText}
       </span>
 
       {/* 确定按钮 */}
@@ -25,6 +25,11 @@ function FilterFooter({ style, className, onCancel, onSave }) {
     </Flex>
   );
 }
+
+// 默认约束
+FilterFooter.defaultProps = {
+  cancelText: "取消"
+};
 
 // props校验
 FilterFooter.propTypes = {
